@@ -206,3 +206,10 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+screen of the vault app
+
+<img width="1684" alt="Screenshot 2025-04-18 at 19 33 29" src="https://github.com/user-attachments/assets/d56bc588-ec98-4a1e-aa19-7801f4fc6a66" />
+
+
+
