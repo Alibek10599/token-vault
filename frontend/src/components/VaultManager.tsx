@@ -1,8 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Input, Button, Divider, Typography, Spin, Alert } from 'antd';
+import {
+  Card,
+  Row,
+  Col,
+  Input,
+  Button,
+  Divider,
+  Typography,
+  Spin,
+  Alert,
+} from 'antd';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
-import { getTokenAccount, initializeVault, depositToVault, withdrawFromVault } from '../utils/vaultOperations';
+import {
+  getTokenAccount,
+  initializeVault,
+  depositToVault,
+  withdrawFromVault,
+} from '../utils/vaultOperations';
 
 const { Text, Title } = Typography;
 
@@ -11,7 +26,10 @@ interface VaultManagerProps {
   tokenMint: string;
 }
 
-const VaultManager: React.FC<VaultManagerProps> = ({ programId, tokenMint }) => {
+const VaultManager: React.FC<VaultManagerProps> = ({
+  programId,
+  tokenMint,
+}) => {
   const { publicKey, connected } = useWallet();
   const [loading, setLoading] = useState(false);
   const [amount, setAmount] = useState('');
@@ -29,13 +47,18 @@ const VaultManager: React.FC<VaultManagerProps> = ({ programId, tokenMint }) => 
 
   const fetchUserTokenAccount = async () => {
     if (!publicKey) return;
-    
+
     try {
-      const tokenAccount = await getTokenAccount(publicKey.toString(), tokenMint);
+      const tokenAccount = await getTokenAccount(
+        publicKey.toString(),
+        tokenMint
+      );
       setUserTokenAccount(tokenAccount);
     } catch (err) {
       console.error('Error fetching token account:', err);
-      setError('Could not find your token account. Make sure you have USDC tokens.');
+      setError(
+        'Could not find your token account. Make sure you have USDC tokens.'
+      );
     }
   };
 
@@ -43,7 +66,7 @@ const VaultManager: React.FC<VaultManagerProps> = ({ programId, tokenMint }) => 
     try {
       // This is a placeholder - implement actual vault fetch logic
       setLoading(true);
-      
+
       // Simulate API call
       setTimeout(() => {
         setVaultAddress('vault_address_placeholder');
@@ -64,21 +87,21 @@ const VaultManager: React.FC<VaultManagerProps> = ({ programId, tokenMint }) => 
 
   const handleCreateVault = async () => {
     if (!publicKey) return;
-    
+
     try {
       setLoading(true);
       setError(null);
-      
+
       // Call initialize vault function
       const newVaultAddress = await initializeVault(
         programId,
         tokenMint,
         publicKey.toString(),
-        "My Token Vault",
+        'My Token Vault',
         100, // 1% fee
         86400 // 1 day timelock
       );
-      
+
       setVaultAddress(newVaultAddress);
       await fetchVaultInfo();
     } catch (err) {
@@ -91,18 +114,18 @@ const VaultManager: React.FC<VaultManagerProps> = ({ programId, tokenMint }) => 
 
   const depositTokens = async () => {
     if (!publicKey || !vaultAddress || !userTokenAccount || !amount) return;
-    
+
     try {
       setLoading(true);
       setError(null);
-      
+
       await depositToVault(
         programId,
         vaultAddress,
         userTokenAccount,
         parseFloat(amount)
       );
-      
+
       setAmount('');
       await fetchVaultInfo();
     } catch (err) {
@@ -114,19 +137,26 @@ const VaultManager: React.FC<VaultManagerProps> = ({ programId, tokenMint }) => 
   };
 
   const withdrawTokens = async () => {
-    if (!publicKey || !vaultAddress || !userTokenAccount || !amount || !isAuthority()) return;
-    
+    if (
+      !publicKey ||
+      !vaultAddress ||
+      !userTokenAccount ||
+      !amount ||
+      !isAuthority()
+    )
+      return;
+
     try {
       setLoading(true);
       setError(null);
-      
+
       await withdrawFromVault(
         programId,
         vaultAddress,
         userTokenAccount,
         parseFloat(amount)
       );
-      
+
       setAmount('');
       await fetchVaultInfo();
     } catch (err) {
@@ -146,9 +176,9 @@ const VaultManager: React.FC<VaultManagerProps> = ({ programId, tokenMint }) => 
     <div style={{ maxWidth: '600px', margin: '0 auto' }}>
       {error && (
         <Alert
-          message="Error"
+          message='Error'
           description={error}
-          type="error"
+          type='error'
           showIcon
           style={{ marginBottom: '16px' }}
           closable
@@ -166,7 +196,7 @@ const VaultManager: React.FC<VaultManagerProps> = ({ programId, tokenMint }) => 
             <Card>
               <Title level={4}>Create a New Token Vault</Title>
               <Button
-                type="primary"
+                type='primary'
                 onClick={handleCreateVault}
                 loading={loading}
                 block
@@ -175,39 +205,44 @@ const VaultManager: React.FC<VaultManagerProps> = ({ programId, tokenMint }) => 
               </Button>
             </Card>
           ) : (
-            <Card title="Manage Your Token Vault" loading={loading}>
+            <Card title='Manage Your Token Vault' loading={loading}>
               <div style={{ marginBottom: '16px' }}>
                 <Text>Vault Address: {vaultAddress}</Text>
               </div>
-              
+
               {vaultInfo && (
                 <div style={{ marginBottom: '16px' }}>
                   <Text>Vault Balance: {vaultInfo.balance} USDC</Text>
                   <br />
                   <Text>Fee Percentage: {vaultInfo.feePercentage}%</Text>
                   <br />
-                  <Text>Withdrawal Timelock: {vaultInfo.withdrawalTimelock / 3600} hours</Text>
+                  <Text>
+                    Withdrawal Timelock: {vaultInfo.withdrawalTimelock / 3600}{' '}
+                    hours
+                  </Text>
                 </div>
               )}
 
               <Row gutter={16}>
                 <Col span={16}>
                   <Input
-                    placeholder="Amount"
+                    placeholder='Amount'
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    suffix="USDC"
-                    type="number"
-                    min="0"
+                    suffix='USDC'
+                    type='number'
+                    min='0'
                   />
                 </Col>
                 <Col span={8}>
                   <Button
-                    type="primary"
+                    type='primary'
                     onClick={depositTokens}
                     loading={loading}
                     block
-                    disabled={!amount || parseFloat(amount) <= 0 || !userTokenAccount}
+                    disabled={
+                      !amount || parseFloat(amount) <= 0 || !userTokenAccount
+                    }
                   >
                     Deposit
                   </Button>
@@ -219,12 +254,12 @@ const VaultManager: React.FC<VaultManagerProps> = ({ programId, tokenMint }) => 
               <Row gutter={16}>
                 <Col span={16}>
                   <Input
-                    placeholder="Amount"
+                    placeholder='Amount'
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
-                    suffix="USDC"
-                    type="number"
-                    min="0"
+                    suffix='USDC'
+                    type='number'
+                    min='0'
                   />
                 </Col>
                 <Col span={8}>
@@ -247,7 +282,9 @@ const VaultManager: React.FC<VaultManagerProps> = ({ programId, tokenMint }) => 
 
               {!isAuthority() && (
                 <div style={{ marginTop: '12px' }}>
-                  <Text type="warning">Only the vault authority can withdraw funds</Text>
+                  <Text type='warning'>
+                    Only the vault authority can withdraw funds
+                  </Text>
                 </div>
               )}
             </Card>

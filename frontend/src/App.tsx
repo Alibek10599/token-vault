@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Layout, Typography, Space, Card, Button } from 'antd';
+import React from 'react';
+import { Layout, Typography} from 'antd';
 import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import {
   ConnectionProvider,
